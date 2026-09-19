@@ -39,7 +39,6 @@ const el = {
   affectionValue: document.getElementById("affection-value"),
   stage: document.getElementById("stage"),
   sprite: document.getElementById("char-sprite"),
-  poseSprite: document.getElementById("pose-sprite"),
   dialogueBox: document.getElementById("dialogue-box"),
   speakerName: document.getElementById("speaker-name"),
   dialogueText: document.getElementById("dialogue-text"),
@@ -91,7 +90,7 @@ function updateAffectionUI() {
 function startNewGame() {
   state = { dayIndex: 0, affection: START_AFFECTION, weather: rollWeather(), history: [] };
   saveState();
-  el.sprite.hidden = true;
+  el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
   loadDay(state.dayIndex);
 }
@@ -101,7 +100,7 @@ function continueGame() {
   if (saved) state = saved;
   if (!state.weather) state.weather = rollWeather();
   if (!state.history) state.history = [];
-  el.sprite.hidden = true;
+  el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
   loadDay(state.dayIndex);
 }
@@ -122,13 +121,6 @@ function loadDay(idx) {
   el.sceneLabel.textContent = currentDay.title;
   el.choicesBox.hidden = true;
   updateAffectionUI();
-
-  // 전신 캐릭터를 씬 안으로 슬라이드인 시킨다 (계속 화면에 머무름)
-  el.poseSprite.hidden = false;
-  el.poseSprite.classList.remove("enter");
-  el.poseSprite.src = "assets/poses/" + (currentDay.entrancePose || "walk") + "_front.png";
-  void el.poseSprite.offsetWidth;
-  requestAnimationFrame(() => el.poseSprite.classList.add("enter"));
 
   queue = currentDay.intro.slice();
 
@@ -153,15 +145,14 @@ function loadDay(idx) {
 
 function renderLine(line) {
   if (line.speaker === "narration") {
-    document.querySelector(".speaker-row").style.display = "none";
+    el.speakerName.style.display = "none";
     el.dialogueText.textContent = line.text;
   } else {
-    document.querySelector(".speaker-row").style.display = "flex";
+    el.speakerName.style.display = "inline-block";
     el.speakerName.textContent = line.speaker;
     el.dialogueText.textContent = line.text;
   }
   if (line.expr) {
-    el.sprite.hidden = false;
     el.sprite.src = "assets/expressions/" + line.expr + ".png";
     el.sprite.style.animation = "none";
     void el.sprite.offsetWidth;
