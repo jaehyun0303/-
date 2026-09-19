@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>너와의 7일 — 데이트 시뮬레이션</title>
+<title>너와의 20일 — 데이트 시뮬레이션</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 <div id="title-screen" class="screen active">
   <div class="title-bg"></div>
   <div class="title-box">
-    <h1>너와의 7일</h1>
+    <h1>너와의 20일</h1>
     <p class="subtitle">A Dating Story</p>
     <button id="start-btn" class="main-btn">시작하기</button>
     <button id="continue-btn" class="main-btn secondary" hidden>이어하기</button>
@@ -34,12 +34,14 @@
   </div>
 
   <div id="stage" class="stage">
-    <img id="pose-sprite" class="pose-sprite" src="" alt="" hidden>
-    <img id="char-sprite" class="char-sprite" src="" alt="유나">
+    <img id="pose-sprite" class="pose-sprite" src="" alt="유나" hidden>
   </div>
 
   <div id="dialogue-box" class="dialogue-box">
-    <div id="speaker-name" class="speaker-name"></div>
+    <div class="speaker-row">
+      <img id="char-sprite" class="mini-portrait" src="" alt="" hidden>
+      <div id="speaker-name" class="speaker-name"></div>
+    </div>
     <div id="dialogue-text" class="dialogue-text"></div>
     <div id="next-indicator" class="next-indicator">▼</div>
   </div>
@@ -48,12 +50,15 @@
 </div>
 
 <div id="ending-screen" class="screen">
-  <div class="title-bg"></div>
-  <div class="title-box">
-    <h1 id="ending-title">엔딩</h1>
-    <img id="ending-sprite" class="ending-sprite" src="" alt="">
-    <p id="ending-desc" class="subtitle"></p>
-    <p id="ending-score" class="ending-score"></p>
+  <div class="ending-scroll">
+    <div class="ending-header">
+      <h1 id="ending-title">엔딩</h1>
+      <img id="ending-sprite" class="ending-sprite" src="" alt="">
+      <p id="ending-desc" class="subtitle"></p>
+      <p id="ending-score" class="ending-score"></p>
+    </div>
+    <div class="recap-label">우리가 함께한 시간들</div>
+    <div id="recap-grid" class="recap-grid"></div>
     <button id="restart-btn" class="main-btn">처음부터 다시</button>
   </div>
 </div>

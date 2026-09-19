@@ -94,6 +94,80 @@ html, body {
   margin-top: -8px;
 }
 
+#ending-screen {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: radial-gradient(circle at 50% 0%, #3a2036 0%, #1c1420 55%, #0e0910 100%);
+}
+.ending-scroll {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 20px 48px;
+  box-sizing: border-box;
+  text-align: center;
+}
+.ending-header { position: relative; z-index: 2; }
+.recap-label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  margin: 6px 0 14px;
+}
+.recap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 30px;
+}
+.recap-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 118px;
+  display: flex;
+  align-items: flex-end;
+  text-align: left;
+}
+.recap-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.88), rgba(0,0,0,0.15) 65%);
+}
+.recap-card-content {
+  position: relative;
+  z-index: 1;
+  padding: 9px 10px;
+  width: 100%;
+}
+.recap-day {
+  font-size: 0.68rem;
+  color: var(--pink);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.recap-choice {
+  font-size: 0.78rem;
+  color: #fff;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+.recap-delta {
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-weight: 700;
+}
+.recap-delta.pos { color: #8fffb0; }
+.recap-delta.neg { color: #ff9a9a; }
+
 /* ---------- Game screen ---------- */
 .hud {
   position: absolute;
@@ -148,37 +222,48 @@ html, body {
   pointer-events: none;
 }
 
-.char-sprite {
-  height: 88%;
-  max-width: 70%;
-  object-fit: contain;
-  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.45));
-  animation: sprite-in 0.35s ease;
-  transition: opacity 0.4s ease;
+/* 미니 표정 초상화: 대화창 안, 이름표 옆에 붙는 작은 얼굴 클로즈업 */
+.mini-portrait {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  object-position: top center;
+  border: 2px solid rgba(255, 92, 138, 0.55);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  animation: portrait-pop 0.25s ease;
 }
-@keyframes sprite-in {
-  from { opacity: 0; transform: translateY(14px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.mini-portrait[hidden] { display: none; }
+@keyframes portrait-pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
 }
 
+/* 전신 캐릭터: 씬 안에 항상 서 있는 메인 비주얼 */
 .pose-sprite {
   position: absolute;
   bottom: 0;
-  height: 62%;
+  left: 50%;
+  height: 74%;
   object-fit: contain;
-  filter: drop-shadow(0 16px 22px rgba(0,0,0,0.45));
+  filter: drop-shadow(0 18px 24px rgba(0,0,0,0.45));
   opacity: 0;
-  transform: translateX(-65vw);
+  transform: translate(calc(-50% - 55vw), 0);
   pointer-events: none;
   z-index: 3;
-  transition: transform 0.85s cubic-bezier(0.22, 0.8, 0.2, 1), opacity 0.25s ease;
+  transition: transform 0.75s cubic-bezier(0.22, 0.8, 0.2, 1), opacity 0.3s ease;
 }
 .pose-sprite[hidden] { display: none; }
-.pose-sprite.enter { opacity: 1; transform: translateX(0); }
-.pose-sprite.exit {
-  opacity: 0;
-  transform: translateX(30vw);
-  transition: transform 0.5s ease, opacity 0.4s ease;
+.pose-sprite.enter {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  animation: sprite-idle 3.4s ease-in-out 0.8s infinite;
+}
+@keyframes sprite-idle {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
 }
 
 .dialogue-box {
@@ -196,6 +281,13 @@ html, body {
   cursor: pointer;
   z-index: 6;
 }
+.speaker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  min-height: 56px;
+}
 .speaker-name {
   display: inline-block;
   font-weight: 700;
@@ -204,9 +296,9 @@ html, body {
   border: 1px solid rgba(255,92,138,0.4);
   border-radius: 8px;
   padding: 2px 12px;
-  margin-bottom: 10px;
   font-size: 0.9rem;
 }
+.speaker-row:has(.mini-portrait[hidden]) { min-height: 0; margin-bottom: 6px; }
 .dialogue-text {
   font-size: 1.05rem;
   line-height: 1.6;
@@ -269,8 +361,9 @@ html, body {
 }
 
 @media (max-width: 520px) {
-  .char-sprite { max-width: 88%; height: 82%; }
+  .pose-sprite { height: 68%; }
   .dialogue-box, .choices-box { width: 94vw; }
   .hud { font-size: 0.75rem; }
   .affection-bar-track { width: 84px; }
+  .recap-grid { grid-template-columns: 1fr 1fr; }
 }
