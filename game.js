@@ -17,6 +17,14 @@ function getAffectionTier(score) {
   return "neutral";
 }
 
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function rollWeather() {
+  return pick(WEATHERS);
+}
+
 const el = {
   dayLabel: document.getElementById("day-label"),
   sceneLabel: document.getElementById("scene-label"),
@@ -24,6 +32,7 @@ const el = {
   affectionValue: document.getElementById("affection-value"),
   stage: document.getElementById("stage"),
   sprite: document.getElementById("char-sprite"),
+  poseSprite: document.getElementById("pose-sprite"),
   dialogueBox: document.getElementById("dialogue-box"),
   speakerName: document.getElementById("speaker-name"),
   dialogueText: document.getElementById("dialogue-text"),
@@ -72,7 +81,7 @@ function updateAffectionUI() {
 }
 
 function startNewGame() {
-  state = { dayIndex: 0, affection: START_AFFECTION };
+  state = { dayIndex: 0, affection: START_AFFECTION, weather: rollWeather() };
   saveState();
   el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
@@ -82,6 +91,7 @@ function startNewGame() {
 function continueGame() {
   const saved = loadState();
   if (saved) state = saved;
+  if (!state.weather) state.weather = rollWeather();
   el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
   loadDay(state.dayIndex);
@@ -93,24 +103,49 @@ function loadDay(idx) {
     return;
   }
   currentDay = STORY[idx];
-  queue = currentDay.intro.slice();
-  if (currentDay.moodLine) {
-    queue.push(currentDay.moodLine[getAffectionTier(state.affection)]);
-  }
-  queuePos = 0;
-  mode = "intro";
+  const weather = state.weather || "clear";
 
   el.stage.className = "stage bg-" + currentDay.bg;
-  const weather = currentDay.weather || "clear";
   el.stage.style.backgroundImage =
     'url("assets/backgrounds/' + currentDay.bg + "_" + weather + '.png")';
   el.dayLabel.textContent = "Day " + currentDay.id;
   el.sceneLabel.textContent = currentDay.title;
   el.choicesBox.hidden = true;
-  el.dialogueBox.hidden = false;
-  el.nextIndicator.classList.remove("hidden");
   updateAffectionUI();
-  showNextLine();
+
+  playEntrance(currentDay.entrancePose || "walk", () => {
+    queue = currentDay.intro.slice();
+    if (currentDay.moodLine) {
+      queue.push(pick(currentDay.moodLine[getAffectionTier(state.affection)]));
+    }
+    if (weather !== "clear" && currentDay.weatherLine && currentDay.weatherLine[weather]) {
+      queue.push(pick(currentDay.weatherLine[weather]));
+    }
+    queuePos = 0;
+    mode = "intro";
+    el.dialogueBox.hidden = false;
+    el.nextIndicator.classList.remove("hidden");
+    showNextLine();
+  });
+}
+
+function playEntrance(pose, callback) {
+  el.dialogueBox.hidden = true;
+  el.sprite.style.opacity = "0";
+  el.poseSprite.hidden = false;
+  el.poseSprite.classList.remove("enter", "exit");
+  el.poseSprite.src = "assets/poses/" + pose + "_front.png";
+  void el.poseSprite.offsetWidth;
+  el.poseSprite.classList.add("enter");
+  setTimeout(() => {
+    el.poseSprite.classList.add("exit");
+    el.sprite.style.opacity = "1";
+    setTimeout(() => {
+      el.poseSprite.hidden = true;
+      el.poseSprite.classList.remove("enter", "exit");
+      callback();
+    }, 400);
+  }, 700);
 }
 
 function renderLine(line) {
@@ -144,8 +179,8 @@ function onQueueFinished() {
   if (mode === "intro") {
     showChoices();
   } else if (mode === "response") {
-    if (currentDay.outro && currentDay.outro.length) {
-      queue = currentDay.outro.slice();
+    if (currentDay.outroVariants && currentDay.outroVariants.length) {
+      queue = pick(currentDay.outroVariants).slice();
       queuePos = 0;
       mode = "outro";
       showNextLine();
@@ -193,6 +228,7 @@ function pickChoice(i) {
 
 function advanceDay() {
   state.dayIndex++;
+  state.weather = rollWeather();
   saveState();
   loadDay(state.dayIndex);
 }

@@ -154,10 +154,31 @@ html, body {
   object-fit: contain;
   filter: drop-shadow(0 20px 30px rgba(0,0,0,0.45));
   animation: sprite-in 0.35s ease;
+  transition: opacity 0.4s ease;
 }
 @keyframes sprite-in {
   from { opacity: 0; transform: translateY(14px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pose-sprite {
+  position: absolute;
+  bottom: 0;
+  height: 62%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,0.45));
+  opacity: 0;
+  transform: translateX(-65vw);
+  pointer-events: none;
+  z-index: 3;
+  transition: transform 0.85s cubic-bezier(0.22, 0.8, 0.2, 1), opacity 0.25s ease;
+}
+.pose-sprite[hidden] { display: none; }
+.pose-sprite.enter { opacity: 1; transform: translateX(0); }
+.pose-sprite.exit {
+  opacity: 0;
+  transform: translateX(30vw);
+  transition: transform 0.5s ease, opacity 0.4s ease;
 }
 
 .dialogue-box {

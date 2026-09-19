@@ -4,18 +4,25 @@
 
 const HEROINE_NAME = "유나";
 const START_AFFECTION = 30;
+const WEATHERS = ["clear", "rain", "snow", "cloudy"];
 
 const STORY = [
   {
     id: 1,
     title: "첫 만남",
     bg: "classroom",
+    entrancePose: "idle",
     intro: [
       { speaker: "narration", text: "새 학기 첫날, 낯선 얼굴이 옆자리에 앉는다." },
       { speaker: "narration", text: "창가로 비치는 햇살 아래, 그 아이는 조심스럽게 가방을 내려놓았다." },
       { speaker: HEROINE_NAME, expr: "neutral", text: "어... 안녕. 네가 이번에 전학 온 애구나?" },
       { speaker: HEROINE_NAME, expr: "worried", text: "나는 유나야. 잘 부탁해... 이렇게 먼저 말 걸어도 괜찮은 거지?" },
     ],
+    weatherLine: {
+      rain: [{ speaker: "narration", text: "창밖에 빗소리가 잔잔하게 깔렸다." }],
+      snow: [{ speaker: "narration", text: "창밖으로 눈이 조용히 흩날리고 있었다." }],
+      cloudy: [{ speaker: "narration", text: "흐린 하늘 탓인지 교실 안이 유독 차분했다." }],
+    },
     choices: [
       {
         text: "반갑게 웃으며 인사한다",
@@ -36,23 +43,39 @@ const STORY = [
         response: [{ speaker: HEROINE_NAME, expr: "playful", text: "풋, 특이한 애네. 마음에 들어." }],
       },
     ],
-    outro: [
-      { speaker: "narration", text: "짧은 인사였지만, 어쩐지 하루 종일 그 목소리가 귓가에 맴돌았다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "짧은 인사였지만, 어쩐지 하루 종일 그 목소리가 귓가에 맴돌았다." }],
+      [{ speaker: "narration", text: "잠들기 전까지도, 오늘 나눈 짧은 대화가 자꾸 떠올랐다." }],
     ],
   },
   {
     id: 2,
     title: "방과 후 대화",
     bg: "hallway",
+    entrancePose: "walk",
     intro: [
       { speaker: "narration", text: "수업이 끝나고 복도에서 유나와 마주쳤다." },
       { speaker: HEROINE_NAME, expr: "playful", text: "어? 마침 잘 만났다. 나 지금 매점 가려던 참인데." },
       { speaker: HEROINE_NAME, expr: "neutral", text: "저기, 시간 있으면 같이 갈래?" },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "worried", text: "...혹시 나랑 있는 거 불편해? 표정이 좀 그래서." },
-      neutral: { speaker: HEROINE_NAME, expr: "neutral", text: "오늘따라 기분이 괜찮아 보이네, 너." },
-      warm: { speaker: HEROINE_NAME, expr: "happy", text: "요즘 너랑 있으면 시간이 왜 이렇게 빨리 가는지 모르겠어." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "worried", text: "...혹시 나랑 있는 거 불편해? 표정이 좀 그래서." },
+        { speaker: HEROINE_NAME, expr: "sad", text: "요즘 대화가 좀 뜸한 것 같아서... 내가 뭐 잘못했나 싶고." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "neutral", text: "오늘따라 기분이 괜찮아 보이네, 너." },
+        { speaker: HEROINE_NAME, expr: "playful", text: "오늘 컨디션 괜찮아 보이네. 다행이다." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "happy", text: "요즘 너랑 있으면 시간이 왜 이렇게 빨리 가는지 모르겠어." },
+        { speaker: HEROINE_NAME, expr: "shy", text: "너랑 얘기하는 시간이 요즘 제일 편해, 솔직히." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: HEROINE_NAME, expr: "worried", text: "비 와서 그런가, 오늘따라 좀 눅눅한 기분이야." }],
+      snow: [{ speaker: HEROINE_NAME, expr: "happy", text: "어? 눈 온다! 나 눈 오는 날 진짜 좋아해." }],
+      cloudy: [{ speaker: "narration", text: "흐린 날씨 탓인지 복도가 유난히 조용했다." }],
     },
     choices: [
       {
@@ -74,14 +97,16 @@ const STORY = [
         response: [{ speaker: HEROINE_NAME, expr: "flustered", text: "뭐?! 아, 알았어, 내가 살게!" }],
       },
     ],
-    outro: [
-      { speaker: "narration", text: "별거 아닌 하굣길이었는데, 괜히 발걸음이 가벼워졌다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "별거 아닌 하굣길이었는데, 괜히 발걸음이 가벼워졌다." }],
+      [{ speaker: "narration", text: "집에 가는 내내, 별것 아닌 대화가 계속 맴돌았다." }],
     ],
   },
   {
     id: 3,
     title: "주말 공원",
     bg: "park",
+    entrancePose: "wave",
     intro: [
       { speaker: "narration", text: "주말, 공원 산책로에서 우연히 유나를 만났다." },
       { speaker: "narration", text: "이어폰을 낀 채 혼자 걷고 있던 그녀가 먼저 손을 흔들었다." },
@@ -89,9 +114,23 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "playful", text: "이것도 인연인데, 그냥 갈 순 없지 않아?" },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "worried", text: "저번에 좀 서먹했잖아... 오늘은 괜찮은 거지?" },
-      neutral: { speaker: HEROINE_NAME, expr: "surprised", text: "진짜 우연이다. 근데 은근 반갑네." },
-      warm: { speaker: HEROINE_NAME, expr: "ecstatic", text: "사실 너 만나려나 하고 좀 기대하면서 나왔어. 비밀이야." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "worried", text: "저번에 좀 서먹했잖아... 오늘은 괜찮은 거지?" },
+        { speaker: HEROINE_NAME, expr: "sad", text: "요즘 좀 데면데면했잖아. 괜히 신경 쓰였어." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "surprised", text: "진짜 우연이다. 근데 은근 반갑네." },
+        { speaker: HEROINE_NAME, expr: "happy", text: "타이밍 좋게 만났네. 왠지 오늘 운이 좋은 걸지도." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "ecstatic", text: "사실 너 만나려나 하고 좀 기대하면서 나왔어. 비밀이야." },
+        { speaker: HEROINE_NAME, expr: "love", text: "이상하게 너 있는 데는 다 눈에 잘 띄더라. 신기하지." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: HEROINE_NAME, expr: "worried", text: "비가 와서 우산 없인 못 걸을 것 같은데... 그래도 괜찮아?" }],
+      snow: [{ speaker: HEROINE_NAME, expr: "ecstatic", text: "눈 쌓인 공원 처음 봐! 완전 예쁘다." }],
+      cloudy: [{ speaker: HEROINE_NAME, expr: "neutral", text: "날이 좀 흐리긴 한데, 산책하기엔 나쁘지 않네." }],
     },
     choices: [
       {
@@ -119,14 +158,16 @@ const STORY = [
       delta: 8,
       response: [{ speaker: HEROINE_NAME, expr: "shy", text: "어... 손, 잡았네. ...싫진 않아." }],
     },
-    outro: [
-      { speaker: "narration", text: "노을이 지기 시작할 때까지, 두 사람은 공원을 몇 바퀴나 돌았다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "노을이 지기 시작할 때까지, 두 사람은 공원을 몇 바퀴나 돌았다." }],
+      [{ speaker: "narration", text: "공원을 나서면서도, 왠지 자꾸 뒤를 돌아보게 됐다." }],
     ],
   },
   {
     id: 4,
     title: "카페 데이트",
     bg: "cafe",
+    entrancePose: "wave",
     intro: [
       { speaker: "narration", text: "유나가 새로 생긴 카페에 같이 가보자고 먼저 연락해왔다." },
       { speaker: "narration", text: "약속 시간보다 일찍 도착한 그녀는 창가 자리에 앉아 손을 흔들었다." },
@@ -134,9 +175,23 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "playful", text: "내가 미리 자리 맡아놨어. 좋은 자리지?" },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "expressionless", text: "...와줘서 다행이다. 안 올까 봐 조금 걱정했어." },
-      neutral: { speaker: HEROINE_NAME, expr: "playful", text: "오늘 메뉴 내가 다 골랐어. 기대해도 좋아." },
-      warm: { speaker: HEROINE_NAME, expr: "shy", text: "둘이 오는 거, 사실 좀 설렜어. 티 안 났으면 좋겠는데." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "expressionless", text: "...와줘서 다행이다. 안 올까 봐 조금 걱정했어." },
+        { speaker: HEROINE_NAME, expr: "worried", text: "혹시 억지로 나온 거 아니지? 그런 거면 말해줘." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "playful", text: "오늘 메뉴 내가 다 골랐어. 기대해도 좋아." },
+        { speaker: HEROINE_NAME, expr: "happy", text: "오늘 분위기 괜찮다. 여기 자주 오자." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "shy", text: "둘이 오는 거, 사실 좀 설렜어. 티 안 났으면 좋겠는데." },
+        { speaker: HEROINE_NAME, expr: "love", text: "너랑 마주 앉아있으면 이상하게 마음이 편해." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: HEROINE_NAME, expr: "shy", text: "이렇게 비 오는 날 카페에 있으니까 왠지 아늑하다." }],
+      snow: [{ speaker: HEROINE_NAME, expr: "happy", text: "창밖에 눈 오는 거 보면서 마시는 커피, 진짜 낭만적이지 않아?" }],
+      cloudy: [{ speaker: "narration", text: "창밖은 흐렸지만, 카페 안은 따뜻한 불빛으로 가득했다." }],
     },
     choices: [
       {
@@ -167,14 +222,16 @@ const STORY = [
       delta: 7,
       response: [{ speaker: HEROINE_NAME, expr: "love", text: "...좋아. 약속이야, 꼭이다." }],
     },
-    outro: [
-      { speaker: "narration", text: "달콤한 케이크만큼이나, 오늘 하루도 달았다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "달콤한 케이크만큼이나, 오늘 하루도 달았다." }],
+      [{ speaker: "narration", text: "카페를 나설 때까지도, 웃음이 가시질 않았다." }],
     ],
   },
   {
     id: 5,
     title: "오해",
     bg: "sunset",
+    entrancePose: "idle",
     intro: [
       { speaker: "narration", text: "며칠째 연락이 뜸했던 유나가 오늘따라 차가운 표정이다." },
       { speaker: "narration", text: "교실 문 앞에서 기다리고 있던 그녀의 표정이 심상치 않다." },
@@ -182,9 +239,23 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "sad", text: "...아니다, 그냥 물어본 거야. 신경 쓰지 마." },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "despair", text: "요즘 우리... 뭔가 어긋난 것 같아서 계속 신경 쓰였어." },
-      neutral: { speaker: HEROINE_NAME, expr: "mad", text: "별거 아닐 수도 있는데, 그냥 한 번은 물어보고 싶었어." },
-      warm: { speaker: HEROINE_NAME, expr: "worried", text: "이런 거 물어보는 내가 좀 유치하다고 생각할까 봐 걱정했어." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "despair", text: "요즘 우리... 뭔가 어긋난 것 같아서 계속 신경 쓰였어." },
+        { speaker: HEROINE_NAME, expr: "despair", text: "요 며칠 계속 이런 생각만 했어. 나만 그런가 싶어서." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "mad", text: "별거 아닐 수도 있는데, 그냥 한 번은 물어보고 싶었어." },
+        { speaker: HEROINE_NAME, expr: "mad", text: "그냥 넘어갈까 했는데, 역시 말은 해야겠더라." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "worried", text: "이런 거 물어보는 내가 좀 유치하다고 생각할까 봐 걱정했어." },
+        { speaker: HEROINE_NAME, expr: "worried", text: "별일 아니라고 생각하면서도 자꾸 마음이 쓰였어." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: "narration", text: "부슬비가 내리는 탓인지, 공기가 유독 무겁게 느껴졌다." }],
+      snow: [{ speaker: HEROINE_NAME, expr: "sad", text: "눈이 오는데도... 지금은 하나도 안 예뻐 보이네." }],
+      cloudy: [{ speaker: "narration", text: "흐린 하늘이 지금 이 분위기와 꼭 닮아 있었다." }],
     },
     choices: [
       {
@@ -209,14 +280,16 @@ const STORY = [
         ],
       },
     ],
-    outro: [
-      { speaker: "narration", text: "짧은 대화였지만, 마음 한구석이 계속 무거웠다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "짧은 대화였지만, 마음 한구석이 계속 무거웠다." }],
+      [{ speaker: "narration", text: "집에 돌아가는 길, 오늘 나눈 말들을 몇 번이고 곱씹었다." }],
     ],
   },
   {
     id: 6,
     title: "화해",
     bg: "rooftop",
+    entrancePose: "sit",
     intro: [
       { speaker: "narration", text: "옥상에서 유나와 둘이 마주 앉았다. 노을이 예쁘게 지고 있다." },
       { speaker: "narration", text: "그녀는 한참을 망설이다가 조심스레 입을 열었다." },
@@ -224,9 +297,23 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "worried", text: "솔직히 말해줘. 나 요즘 좀 불안했어." },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "sad", text: "솔직히... 요즘 좀 자신 없었어, 우리 사이." },
-      neutral: { speaker: HEROINE_NAME, expr: "worried", text: "그냥 확인하고 싶었어. 우리 여전히 괜찮은지." },
-      warm: { speaker: HEROINE_NAME, expr: "love", text: "이상하게 너랑 있으면 이런 고민도 별거 아닌 것처럼 느껴져." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "sad", text: "솔직히... 요즘 좀 자신 없었어, 우리 사이." },
+        { speaker: HEROINE_NAME, expr: "sad", text: "요즘 계속 혼자 마음 졸였던 것 같아, 사실은." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "worried", text: "그냥 확인하고 싶었어. 우리 여전히 괜찮은지." },
+        { speaker: HEROINE_NAME, expr: "worried", text: "그냥 한 번은 제대로 얘기하고 싶었어, 우리." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "love", text: "이상하게 너랑 있으면 이런 고민도 별거 아닌 것처럼 느껴져." },
+        { speaker: HEROINE_NAME, expr: "love", text: "너랑 있으면 별거 아닌 걱정도 다 사라지는 기분이야." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: HEROINE_NAME, expr: "worried", text: "비가 그쳐서 다행이야. 안 그랬으면 여기 못 왔을 텐데." }],
+      snow: [{ speaker: HEROINE_NAME, expr: "love", text: "눈 내리는 옥상이라니, 왠지 오늘 좀 특별하게 느껴진다." }],
+      cloudy: [{ speaker: "narration", text: "구름이 낮게 깔린 하늘 아래, 옥상은 유난히 고요했다." }],
     },
     choices: [
       {
@@ -254,14 +341,16 @@ const STORY = [
       delta: 8,
       response: [{ speaker: HEROINE_NAME, expr: "love", text: "...따뜻하다. 조금만 더 이렇게 있자." }],
     },
-    outro: [
-      { speaker: "narration", text: "노을이 완전히 저물 때까지, 둘은 그 자리에 오래 머물렀다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "노을이 완전히 저물 때까지, 둘은 그 자리에 오래 머물렀다." }],
+      [{ speaker: "narration", text: "완전히 어두워질 때까지, 둘 다 자리를 뜨지 못했다." }],
     ],
   },
   {
     id: 7,
     title: "축제, 그리고 고백",
     bg: "festival",
+    entrancePose: "idle",
     intro: [
       { speaker: "narration", text: "축제 날 밤, 불꽃놀이가 시작되기 직전이다." },
       { speaker: "narration", text: "사람들의 웅성거림 속에서도, 유나의 목소리만은 또렷하게 들렸다." },
@@ -269,9 +358,23 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "shy", text: "오늘이 아니면 왠지 말 못 할 것 같아서." },
     ],
     moodLine: {
-      cold: { speaker: HEROINE_NAME, expr: "worried", text: "사실 오늘 말 못 하고 그냥 넘어갈까도 생각했어." },
-      neutral: { speaker: HEROINE_NAME, expr: "shy", text: "이 말 하려고 며칠 동안 연습했다니까, 나." },
-      warm: { speaker: HEROINE_NAME, expr: "love", text: "너랑 있으면 이상하게 용기가 나. 그래서 오늘은 꼭 말하려고." },
+      cold: [
+        { speaker: HEROINE_NAME, expr: "worried", text: "사실 오늘 말 못 하고 그냥 넘어갈까도 생각했어." },
+        { speaker: HEROINE_NAME, expr: "worried", text: "이 말, 몇 번이나 하려다 그만뒀는지 몰라." },
+      ],
+      neutral: [
+        { speaker: HEROINE_NAME, expr: "shy", text: "이 말 하려고 며칠 동안 연습했다니까, 나." },
+        { speaker: HEROINE_NAME, expr: "shy", text: "심장이 왜 이렇게 뛰는지 모르겠다, 지금." },
+      ],
+      warm: [
+        { speaker: HEROINE_NAME, expr: "love", text: "너랑 있으면 이상하게 용기가 나. 그래서 오늘은 꼭 말하려고." },
+        { speaker: HEROINE_NAME, expr: "love", text: "너라서 오늘 이 말을 할 용기가 났어." },
+      ],
+    },
+    weatherLine: {
+      rain: [{ speaker: HEROINE_NAME, expr: "worried", text: "비 오는데 불꽃놀이 볼 수 있을까 걱정했는데, 다행히 그쳤나 봐." }],
+      snow: [{ speaker: HEROINE_NAME, expr: "ecstatic", text: "눈 오는 축제라니, 완전 동화 같다!" }],
+      cloudy: [{ speaker: "narration", text: "구름 낀 밤하늘이었지만, 축제의 불빛만은 선명하게 빛났다." }],
     },
     choices: [
       {
@@ -290,8 +393,9 @@ const STORY = [
         response: [{ speaker: HEROINE_NAME, expr: "sad", text: "...역시, 농담이었구나." }],
       },
     ],
-    outro: [
-      { speaker: "narration", text: "불꽃이 밤하늘을 수놓는 동안, 두 사람의 이야기는 새로운 페이지로 넘어가고 있었다." },
+    outroVariants: [
+      [{ speaker: "narration", text: "불꽃이 밤하늘을 수놓는 동안, 두 사람의 이야기는 새로운 페이지로 넘어가고 있었다." }],
+      [{ speaker: "narration", text: "불꽃놀이의 마지막 빛이 사그라들 때까지, 두 사람은 그 자리에 서 있었다." }],
     ],
   },
 ];
