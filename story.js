@@ -5,6 +5,40 @@
 const HEROINE_NAME = "유나";
 const START_AFFECTION = 30;
 const WEATHERS = ["clear", "rain", "snow", "cloudy"];
+const ALL_SCENES = ["classroom", "hallway", "park", "cafe", "sunset", "rooftop", "festival"];
+
+// 터치 인터랙션: 부위별 반응 (매일 랜덤으로 하나씩 고른다)
+const TOUCH_REACTIONS = {
+  head: [
+    { expr: "bashful", text: "...뭐 하는 거야, 갑자기." },
+    { expr: "flustered_deep", text: "어? 머리는 왜 만져..." },
+    { expr: "smile_soft", text: "...싫진 않은데, 부끄럽잖아." },
+  ],
+  cheek: [
+    { expr: "flustered_deep", text: "얼굴 만지지 마, 간지럽단 말이야." },
+    { expr: "bashful", text: "...왜 자꾸 볼을 콕콕 찔러." },
+    { expr: "pouty", text: "야, 그거 은근 아파." },
+  ],
+  shoulder: [
+    { expr: "startled", text: "어? 놀랐잖아, 갑자기." },
+    { expr: "smile_soft", text: "...기대도 돼, 이 정도는." },
+    { expr: "giddy", text: "왜 자꾸 툭툭 건드려, 신경 쓰이게." },
+  ],
+  hand: [
+    { expr: "shy", text: "...손, 잡고 싶었어?" },
+    { expr: "blissful", text: "따뜻하다, 네 손." },
+    { expr: "bashful", text: "...누가 보면 어떡해, 그래도 놓진 마." },
+  ],
+};
+
+// 쓰담쓰담: 연속으로 머리를 쓰다듬을 때 순서대로 나오는 반응
+const PAT_REACTIONS = [
+  { expr: "bashful", text: "...갑자기 왜 쓰다듬어." },
+  { expr: "blissful", text: "...기분 좋은데, 이거." },
+  { expr: "enraptured", text: "...더 해줘도 되는데." },
+  { expr: "blissful", text: "나 강아지 아닌데, 자꾸 이러기야." },
+  { expr: "playful", text: "이제 그만~ 머리 다 눌린다니까." },
+];
 
 const STORY = [
   {
@@ -350,6 +384,7 @@ const STORY = [
     id: 7,
     title: "축제, 그리고 고백",
     bg: "festival",
+    forceBg: "festival",
     entrancePose: "idle",
     intro: [
       { speaker: "narration", text: "축제 날 밤, 불꽃놀이가 시작되기 직전이다." },
@@ -755,6 +790,7 @@ const STORY = [
     id: 14,
     title: "소나기",
     bg: "park",
+    forceBg: "park",
     entrancePose: "run",
     forceWeather: "rain",
     intro: [
@@ -1036,6 +1072,7 @@ const STORY = [
     id: 19,
     title: "특별한 겨울날",
     bg: "park",
+    forceBg: "park",
     entrancePose: "walk",
     forceWeather: "snow",
     intro: [
@@ -1088,6 +1125,7 @@ const STORY = [
     id: 20,
     title: "스무 날, 그리고 약속",
     bg: "festival",
+    forceBg: "festival",
     entrancePose: "idle",
     intro: [
       { speaker: "narration", text: "함께한 시간을 돌아보게 되는 밤, 유나가 축제에 가자며 먼저 연락해왔다." },

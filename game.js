@@ -10,13 +10,17 @@ const BRIDGE_LINES = [
   { speaker: "narration", text: "대화가 잠깐 끊긴 사이, 그녀의 표정이 살짝 바뀌었다." },
 ];
 
-let state = { dayIndex: 0, affection: START_AFFECTION, weather: "clear", history: [] };
+let state = { dayIndex: 0, affection: START_AFFECTION, weather: "clear", location: "classroom", history: [] };
 let currentDay = null;
 let currentWeather = "clear";
+let currentBg = "classroom";
 let currentChoices = [];
 let queue = [];
 let queuePos = 0;
 let mode = "intro"; // 'intro' | 'response' | 'outro'
+let touchedParts = new Set();
+let patCount = 0;
+let toastTimer = null;
 
 function getAffectionTier(score) {
   if (score < 40) return "cold";
@@ -30,6 +34,10 @@ function pick(arr) {
 
 function rollWeather() {
   return pick(WEATHERS);
+}
+
+function rollLocation() {
+  return pick(ALL_SCENES);
 }
 
 const el = {
@@ -46,6 +54,10 @@ const el = {
   choicesBox: document.getElementById("choices-box"),
   continueBtn: document.getElementById("continue-btn"),
   recapGrid: document.getElementById("recap-grid"),
+  touchScene: document.getElementById("touch-scene"),
+  touchSprite: document.getElementById("touch-sprite"),
+  touchToast: document.getElementById("touch-toast"),
+  touchContinueBtn: document.getElementById("touch-continue-btn"),
 };
 
 function clamp(v, min, max) {
@@ -88,7 +100,13 @@ function updateAffectionUI() {
 }
 
 function startNewGame() {
-  state = { dayIndex: 0, affection: START_AFFECTION, weather: rollWeather(), history: [] };
+  state = {
+    dayIndex: 0,
+    affection: START_AFFECTION,
+    weather: rollWeather(),
+    location: rollLocation(),
+    history: [],
+  };
   saveState();
   el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
@@ -99,6 +117,7 @@ function continueGame() {
   const saved = loadState();
   if (saved) state = saved;
   if (!state.weather) state.weather = rollWeather();
+  if (!state.location) state.location = rollLocation();
   if (!state.history) state.history = [];
   el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
@@ -112,11 +131,13 @@ function loadDay(idx) {
   }
   currentDay = STORY[idx];
   const weather = currentDay.forceWeather || state.weather || "clear";
+  const bg = currentDay.forceBg || state.location || currentDay.bg || "classroom";
   currentWeather = weather;
+  currentBg = bg;
 
-  el.stage.className = "stage bg-" + currentDay.bg;
+  el.stage.className = "stage bg-" + bg;
   el.stage.style.backgroundImage =
-    'url("assets/backgrounds/' + currentDay.bg + "_" + weather + '.png")';
+    'url("assets/backgrounds/' + bg + "_" + weather + '.png")';
   el.dayLabel.textContent = "Day " + currentDay.id;
   el.sceneLabel.textContent = currentDay.title;
   el.choicesBox.hidden = true;
@@ -172,7 +193,7 @@ function showNextLine() {
 
 function onQueueFinished() {
   if (mode === "intro") {
-    showChoices();
+    showTouchScene();
   } else if (mode === "response") {
     if (currentDay.outroVariants && currentDay.outroVariants.length) {
       queue = pick(currentDay.outroVariants).slice();
@@ -184,6 +205,53 @@ function onQueueFinished() {
     }
   } else if (mode === "outro") {
     advanceDay();
+  }
+}
+
+function showTouchScene() {
+  touchedParts = new Set();
+  patCount = 0;
+  el.dialogueBox.hidden = true;
+  el.choicesBox.hidden = true;
+  el.touchToast.hidden = true;
+  el.sprite.style.visibility = "hidden";
+  el.touchSprite.src = "assets/poses/" + (currentDay.entrancePose || "idle") + "_front.png";
+  el.touchScene.hidden = false;
+}
+
+function showToast(text) {
+  el.touchToast.textContent = text;
+  el.touchToast.hidden = false;
+  el.touchToast.style.animation = "none";
+  void el.touchToast.offsetWidth;
+  el.touchToast.style.animation = "";
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.touchToast.hidden = true;
+  }, 1800);
+}
+
+function handleTouch(part) {
+  if (part === "head") {
+    patCount++;
+    const reaction = PAT_REACTIONS[Math.min(patCount, PAT_REACTIONS.length) - 1];
+    showToast(reaction.text);
+    if (patCount <= 4) {
+      state.affection = clamp(state.affection + 1, 0, 100);
+      saveState();
+      updateAffectionUI();
+    }
+    return;
+  }
+  const pool = TOUCH_REACTIONS[part];
+  if (!pool) return;
+  const reaction = pick(pool);
+  showToast(reaction.text);
+  if (!touchedParts.has(part)) {
+    touchedParts.add(part);
+    state.affection = clamp(state.affection + 1, 0, 100);
+    saveState();
+    updateAffectionUI();
   }
 }
 
@@ -213,7 +281,7 @@ function pickChoice(i) {
   state.history.push({
     day: currentDay.id,
     title: currentDay.title,
-    bg: currentDay.bg,
+    bg: currentBg,
     weather: currentWeather,
     choiceText: choice.text,
     delta: choice.delta,
@@ -232,6 +300,7 @@ function pickChoice(i) {
 function advanceDay() {
   state.dayIndex++;
   state.weather = rollWeather();
+  state.location = rollLocation();
   saveState();
   loadDay(state.dayIndex);
 }
@@ -296,6 +365,14 @@ document.getElementById("restart-btn").addEventListener("click", () => {
   clearState();
   showScreen("title-screen");
   checkContinueVisibility();
+});
+document.querySelectorAll(".hotspot").forEach((btn) => {
+  btn.addEventListener("click", () => handleTouch(btn.dataset.part));
+});
+el.touchContinueBtn.addEventListener("click", () => {
+  el.touchScene.hidden = true;
+  el.sprite.style.visibility = "visible";
+  showChoices();
 });
 
 checkContinueVisibility();

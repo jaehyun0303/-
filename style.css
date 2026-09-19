@@ -235,6 +235,91 @@ html, body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* ---------- 터치 인터랙션 장면 ---------- */
+.touch-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 70px 20px 26px;
+  box-sizing: border-box;
+}
+.touch-scene[hidden] { display: none; }
+.touch-hint {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  text-align: center;
+  margin: 0;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+.touch-wrap {
+  position: relative;
+  height: min(58vh, 460px);
+  aspect-ratio: 122 / 250;
+}
+.touch-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -10% -60%;
+  background: radial-gradient(ellipse at center, rgba(10,6,12,0.55) 0%, rgba(10,6,12,0.25) 55%, rgba(10,6,12,0) 78%);
+  z-index: -1;
+}
+.touch-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 26px rgba(0,0,0,0.45));
+  pointer-events: none;
+  user-select: none;
+}
+.hotspot {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.hotspot:focus-visible { outline: 2px solid var(--pink); }
+.hotspot-head { top: 0%; height: 19%; }
+.hotspot-cheek { top: 19%; height: 15%; }
+.hotspot-shoulder { top: 36%; height: 16%; }
+.hotspot-hand { top: 53%; height: 16%; }
+.touch-toast {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translate(-50%, 0);
+  width: max-content;
+  max-width: 240px;
+  background: var(--panel);
+  border: 1px solid rgba(255,92,138,0.4);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  animation: toast-pop 0.25s ease;
+  pointer-events: none;
+}
+.touch-toast[hidden] { display: none; }
+@keyframes toast-pop {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.touch-continue {
+  margin-top: 4px;
+}
+
 .dialogue-box {
   position: absolute;
   left: 50%;
