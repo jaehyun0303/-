@@ -58,6 +58,7 @@ const el = {
   touchSprite: document.getElementById("touch-sprite"),
   touchToast: document.getElementById("touch-toast"),
   touchContinueBtn: document.getElementById("touch-continue-btn"),
+  cheekOverlay: document.getElementById("cheek-pull-overlay"),
 };
 
 function clamp(v, min, max) {
@@ -214,6 +215,7 @@ function showTouchScene() {
   el.dialogueBox.hidden = true;
   el.choicesBox.hidden = true;
   el.touchToast.hidden = true;
+  el.cheekOverlay.hidden = true;
   el.sprite.style.visibility = "hidden";
   el.touchSprite.src = "assets/poses/" + (currentDay.entrancePose || "idle") + "_front.png";
   el.touchScene.hidden = false;
@@ -232,9 +234,11 @@ function showToast(text) {
 }
 
 function handleTouch(part) {
+  const tier = getAffectionTier(state.affection);
   if (part === "head") {
     patCount++;
-    const reaction = PAT_REACTIONS[Math.min(patCount, PAT_REACTIONS.length) - 1];
+    const pool = PAT_REACTIONS[tier];
+    const reaction = pool[Math.min(patCount, pool.length) - 1];
     showToast(reaction.text);
     if (patCount <= 4) {
       state.affection = clamp(state.affection + 1, 0, 100);
@@ -243,7 +247,7 @@ function handleTouch(part) {
     }
     return;
   }
-  const pool = TOUCH_REACTIONS[part];
+  const pool = TOUCH_REACTIONS[part] && TOUCH_REACTIONS[part][tier];
   if (!pool) return;
   const reaction = pick(pool);
   showToast(reaction.text);
@@ -253,6 +257,24 @@ function handleTouch(part) {
     saveState();
     updateAffectionUI();
   }
+}
+
+function startCheekPull() {
+  const tier = getAffectionTier(state.affection);
+  const reaction = pick(CHEEK_PULL_REACTIONS[tier]);
+  el.cheekOverlay.src = "assets/cheekpull/cheekpull_" + reaction.expr + ".png";
+  el.cheekOverlay.hidden = false;
+  showToast(reaction.text);
+  if (!touchedParts.has("cheek")) {
+    touchedParts.add("cheek");
+    state.affection = clamp(state.affection + 1, 0, 100);
+    saveState();
+    updateAffectionUI();
+  }
+}
+
+function endCheekPull() {
+  el.cheekOverlay.hidden = true;
 }
 
 function showChoices() {
@@ -367,8 +389,18 @@ document.getElementById("restart-btn").addEventListener("click", () => {
   checkContinueVisibility();
 });
 document.querySelectorAll(".hotspot").forEach((btn) => {
+  if (btn.dataset.part === "cheek") return;
   btn.addEventListener("click", () => handleTouch(btn.dataset.part));
 });
+const cheekHotspot = document.querySelector(".hotspot-cheek");
+cheekHotspot.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  startCheekPull();
+});
+cheekHotspot.addEventListener("pointerup", endCheekPull);
+cheekHotspot.addEventListener("pointerleave", endCheekPull);
+cheekHotspot.addEventListener("pointercancel", endCheekPull);
+window.addEventListener("pointerup", endCheekPull);
 el.touchContinueBtn.addEventListener("click", () => {
   el.touchScene.hidden = true;
   el.sprite.style.visibility = "visible";

@@ -293,6 +293,23 @@ html, body {
 .hotspot-cheek { top: 19%; height: 15%; }
 .hotspot-shoulder { top: 36%; height: 16%; }
 .hotspot-hand { top: 53%; height: 16%; }
+.cheek-pull-overlay {
+  position: absolute;
+  top: -3%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  width: 84%;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.5));
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.cheek-pull-overlay:not([hidden]) {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+.cheek-pull-overlay[hidden] { display: block; visibility: hidden; }
 .touch-toast {
   position: absolute;
   left: 50%;

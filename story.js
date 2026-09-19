@@ -7,38 +7,75 @@ const START_AFFECTION = 30;
 const WEATHERS = ["clear", "rain", "snow", "cloudy"];
 const ALL_SCENES = ["classroom", "hallway", "park", "cafe", "sunset", "rooftop", "festival"];
 
-// 터치 인터랙션: 부위별 반응 (매일 랜덤으로 하나씩 고른다)
+// 터치 인터랙션: 부위별 반응 — 현재 호감도 구간(cold/neutral/warm)에 따라 다르게 나온다
 const TOUCH_REACTIONS = {
-  head: [
-    { expr: "bashful", text: "...뭐 하는 거야, 갑자기." },
-    { expr: "flustered_deep", text: "어? 머리는 왜 만져..." },
-    { expr: "smile_soft", text: "...싫진 않은데, 부끄럽잖아." },
+  shoulder: {
+    cold: [
+      { expr: "aloof", text: "...왜 자꾸 건드려." },
+      { expr: "anxious", text: "어, 놀랐잖아..." },
+    ],
+    neutral: [
+      { expr: "startled", text: "어? 놀랐잖아, 갑자기." },
+      { expr: "smile_soft", text: "...기대도 돼, 이 정도는." },
+    ],
+    warm: [
+      { expr: "giddy", text: "왜 자꾸 툭툭 건드려, 신경 쓰이게." },
+      { expr: "blissful", text: "...이렇게 기대는 거, 좋아." },
+    ],
+  },
+  hand: {
+    cold: [
+      { expr: "anxious", text: "...손은 왜 잡아." },
+      { expr: "aloof", text: "...아직 그럴 사이는 아니지 않아?" },
+    ],
+    neutral: [
+      { expr: "shy", text: "...손, 잡고 싶었어?" },
+      { expr: "bashful", text: "...누가 보면 어떡해." },
+    ],
+    warm: [
+      { expr: "blissful", text: "따뜻하다, 네 손." },
+      { expr: "enamored", text: "...이대로 계속 잡고 있고 싶다." },
+    ],
+  },
+};
+
+// 쓰담쓰담: 연속으로 머리를 쓰다듬을 때 나오는 반응 (호감도 구간별)
+const PAT_REACTIONS = {
+  cold: [
+    { expr: "aloof", text: "...갑자기 왜 이래?" },
+    { expr: "anxious", text: "...손 치워줄래, 조금." },
+    { expr: "sorrow", text: "...이런다고 뭐가 달라지는 것도 아닌데." },
   ],
-  cheek: [
-    { expr: "flustered_deep", text: "얼굴 만지지 마, 간지럽단 말이야." },
-    { expr: "bashful", text: "...왜 자꾸 볼을 콕콕 찔러." },
-    { expr: "pouty", text: "야, 그거 은근 아파." },
+  neutral: [
+    { expr: "bashful", text: "...갑자기 왜 쓰다듬어." },
+    { expr: "smile_soft", text: "...기분 좋은데, 이거." },
+    { expr: "giddy", text: "...더 해줘도 되는데?" },
   ],
-  shoulder: [
-    { expr: "startled", text: "어? 놀랐잖아, 갑자기." },
-    { expr: "smile_soft", text: "...기대도 돼, 이 정도는." },
-    { expr: "giddy", text: "왜 자꾸 툭툭 건드려, 신경 쓰이게." },
-  ],
-  hand: [
-    { expr: "shy", text: "...손, 잡고 싶었어?" },
-    { expr: "blissful", text: "따뜻하다, 네 손." },
-    { expr: "bashful", text: "...누가 보면 어떡해, 그래도 놓진 마." },
+  warm: [
+    { expr: "blissful", text: "...기분 좋다, 계속해줘." },
+    { expr: "enraptured", text: "나 강아지 아닌데, 자꾸 이러기야." },
+    { expr: "adoring", text: "...너한테는 이런 것도 다 좋아." },
   ],
 };
 
-// 쓰담쓰담: 연속으로 머리를 쓰다듬을 때 순서대로 나오는 반응
-const PAT_REACTIONS = [
-  { expr: "bashful", text: "...갑자기 왜 쓰다듬어." },
-  { expr: "blissful", text: "...기분 좋은데, 이거." },
-  { expr: "enraptured", text: "...더 해줘도 되는데." },
-  { expr: "blissful", text: "나 강아지 아닌데, 자꾸 이러기야." },
-  { expr: "playful", text: "이제 그만~ 머리 다 눌린다니까." },
-];
+// 볼 당기기: 누르고 있는 동안 표정이 바뀌고, 떼면 원래대로 돌아온다 (호감도 구간별)
+const CHEEK_PULL_REACTIONS = {
+  cold: [
+    { expr: "angry", text: "야, 아파! 그만해." },
+    { expr: "hurt", text: "...아파, 진짜." },
+    { expr: "sad", text: "...왜 자꾸 이런 걸로 장난쳐." },
+  ],
+  neutral: [
+    { expr: "flustered", text: "뭐, 뭐 하는 거야 갑자기!" },
+    { expr: "shy", text: "...볼 만지지 마, 부끄럽잖아." },
+    { expr: "neutral", text: "...치, 뭐 하자는 거야." },
+  ],
+  warm: [
+    { expr: "aegyo", text: "에잉~ 그만 잡아당겨~" },
+    { expr: "playful", text: "야! 나도 똑같이 해줄까?" },
+    { expr: "happy", text: "...이런 장난도 은근 좋아, 너랑이면." },
+  ],
+};
 
 const STORY = [
   {

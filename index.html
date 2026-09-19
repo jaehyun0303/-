@@ -38,13 +38,14 @@
   </div>
 
   <div id="touch-scene" class="touch-scene" hidden>
-    <p class="touch-hint">화면을 톡톡 건드려봐 — 머리는 쓰다듬을 수도 있어</p>
+    <p class="touch-hint">화면을 톡톡 건드려봐 — 머리는 쓰다듬고, 볼은 꾹 눌러봐</p>
     <div class="touch-wrap">
       <img id="touch-sprite" class="touch-sprite" src="" alt="유나">
       <button class="hotspot hotspot-head" data-part="head" aria-label="머리 쓰다듬기"></button>
-      <button class="hotspot hotspot-cheek" data-part="cheek" aria-label="볼 콕 찌르기"></button>
+      <button class="hotspot hotspot-cheek" data-part="cheek" aria-label="볼 꾹 누르기"></button>
       <button class="hotspot hotspot-shoulder" data-part="shoulder" aria-label="어깨 톡톡"></button>
       <button class="hotspot hotspot-hand" data-part="hand" aria-label="손 잡기"></button>
+      <img id="cheek-pull-overlay" class="cheek-pull-overlay" src="" alt="" hidden>
       <div id="touch-toast" class="touch-toast" hidden></div>
     </div>
     <button id="touch-continue-btn" class="main-btn touch-continue">다음으로</button>
