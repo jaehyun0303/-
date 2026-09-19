@@ -101,6 +101,9 @@ function loadDay(idx) {
   mode = "intro";
 
   el.stage.className = "stage bg-" + currentDay.bg;
+  const weather = currentDay.weather || "clear";
+  el.stage.style.backgroundImage =
+    'url("assets/backgrounds/' + currentDay.bg + "_" + weather + '.png")';
   el.dayLabel.textContent = "Day " + currentDay.id;
   el.sceneLabel.textContent = currentDay.title;
   el.choicesBox.hidden = true;
