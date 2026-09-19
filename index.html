@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>너와의 7일 — 데이트 시뮬레이션</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="title-screen" class="screen active">
+  <div class="title-bg"></div>
+  <div class="title-box">
+    <h1>너와의 7일</h1>
+    <p class="subtitle">A Dating Story</p>
+    <button id="start-btn" class="main-btn">시작하기</button>
+    <button id="continue-btn" class="main-btn secondary" hidden>이어하기</button>
+  </div>
+</div>
+
+<div id="game-screen" class="screen">
+  <div class="hud">
+    <div class="hud-left">
+      <span id="day-label">Day 1</span>
+      <span id="scene-label">교실</span>
+    </div>
+    <div class="hud-right">
+      <span class="heart-icon">♥</span>
+      <div class="affection-bar-track">
+        <div id="affection-bar-fill" class="affection-bar-fill"></div>
+      </div>
+      <span id="affection-value">30</span>
+    </div>
+  </div>
+
+  <div id="stage" class="stage">
+    <img id="char-sprite" class="char-sprite" src="" alt="유나">
+  </div>
+
+  <div id="dialogue-box" class="dialogue-box">
+    <div id="speaker-name" class="speaker-name"></div>
+    <div id="dialogue-text" class="dialogue-text"></div>
+    <div id="next-indicator" class="next-indicator">▼</div>
+  </div>
+
+  <div id="choices-box" class="choices-box" hidden></div>
+</div>
+
+<div id="ending-screen" class="screen">
+  <div class="title-bg"></div>
+  <div class="title-box">
+    <h1 id="ending-title">엔딩</h1>
+    <img id="ending-sprite" class="ending-sprite" src="" alt="">
+    <p id="ending-desc" class="subtitle"></p>
+    <p id="ending-score" class="ending-score"></p>
+    <button id="restart-btn" class="main-btn">처음부터 다시</button>
+  </div>
+</div>
+
+<script src="story.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
