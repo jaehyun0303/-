@@ -8,7 +8,7 @@ let state = { dayIndex: 0, affection: START_AFFECTION };
 let currentDay = null;
 let queue = [];
 let queuePos = 0;
-let mode = "intro"; // 'intro' | 'response'
+let mode = "intro"; // 'intro' | 'response' | 'outro'
 
 const el = {
   dayLabel: document.getElementById("day-label"),
@@ -131,6 +131,15 @@ function onQueueFinished() {
   if (mode === "intro") {
     showChoices();
   } else if (mode === "response") {
+    if (currentDay.outro && currentDay.outro.length) {
+      queue = currentDay.outro.slice();
+      queuePos = 0;
+      mode = "outro";
+      showNextLine();
+    } else {
+      advanceDay();
+    }
+  } else if (mode === "outro") {
     advanceDay();
   }
 }

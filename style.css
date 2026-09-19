@@ -134,15 +134,13 @@ html, body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  background: var(--bg-dark);
   transition: background 0.6s ease;
 }
-.stage.bg-classroom { background: linear-gradient(to bottom, #4a5a7a 0%, #6b7fa3 40%, #d8cfe0 100%); }
-.stage.bg-hallway   { background: linear-gradient(to bottom, #3c3450 0%, #5c5478 45%, #cbb8c4 100%); }
-.stage.bg-park       { background: linear-gradient(to bottom, #5c8a6e 0%, #8fb08a 45%, #e8dcc0 100%); }
-.stage.bg-cafe        { background: linear-gradient(to bottom, #6e4a3a 0%, #a06f52 45%, #e8cfa8 100%); }
-.stage.bg-sunset      { background: linear-gradient(to bottom, #3a2452 0%, #a2475a 45%, #f0955a 100%); }
-.stage.bg-festival    { background: linear-gradient(to bottom, #241a3a 0%, #5a3466 45%, #d9769a 100%); }
-.stage.bg-rooftop     { background: linear-gradient(to bottom, #1e2a4a 0%, #3e5a86 45%, #f2c98a 100%); }
+/* 배경 이미지가 생기면 여기에 장면별로 추가:
+   .stage.bg-classroom { background: url("assets/backgrounds/classroom.png") center/cover; }
+   .stage.bg-hallway, .stage.bg-park, .stage.bg-cafe, .stage.bg-sunset,
+   .stage.bg-festival, .stage.bg-rooftop 도 같은 방식. */
 
 .char-sprite {
   height: 88%;
