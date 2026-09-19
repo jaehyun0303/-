@@ -6,9 +6,16 @@ const SAVE_KEY = "dating_game_7days_save_v1";
 
 let state = { dayIndex: 0, affection: START_AFFECTION };
 let currentDay = null;
+let currentChoices = [];
 let queue = [];
 let queuePos = 0;
 let mode = "intro"; // 'intro' | 'response' | 'outro'
+
+function getAffectionTier(score) {
+  if (score < 40) return "cold";
+  if (score >= 70) return "warm";
+  return "neutral";
+}
 
 const el = {
   dayLabel: document.getElementById("day-label"),
@@ -87,6 +94,9 @@ function loadDay(idx) {
   }
   currentDay = STORY[idx];
   queue = currentDay.intro.slice();
+  if (currentDay.moodLine) {
+    queue.push(currentDay.moodLine[getAffectionTier(state.affection)]);
+  }
   queuePos = 0;
   mode = "intro";
 
@@ -148,9 +158,16 @@ function showChoices() {
   el.dialogueBox.hidden = true;
   el.choicesBox.hidden = false;
   el.choicesBox.innerHTML = "";
-  currentDay.choices.forEach((choice, i) => {
+
+  currentChoices = currentDay.choices.slice();
+  const bonus = currentDay.bonusChoice;
+  if (bonus && state.affection >= bonus.minAffection) {
+    currentChoices.push(bonus);
+  }
+
+  currentChoices.forEach((choice, i) => {
     const btn = document.createElement("button");
-    btn.className = "choice-btn";
+    btn.className = "choice-btn" + (choice === bonus ? " bonus" : "");
     btn.textContent = choice.text;
     btn.addEventListener("click", () => pickChoice(i));
     el.choicesBox.appendChild(btn);
@@ -158,7 +175,7 @@ function showChoices() {
 }
 
 function pickChoice(i) {
-  const choice = currentDay.choices[i];
+  const choice = currentChoices[i];
   state.affection = clamp(state.affection + choice.delta, 0, 100);
   saveState();
   updateAffectionUI();

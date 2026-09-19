@@ -49,6 +49,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "playful", text: "어? 마침 잘 만났다. 나 지금 매점 가려던 참인데." },
       { speaker: HEROINE_NAME, expr: "neutral", text: "저기, 시간 있으면 같이 갈래?" },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "worried", text: "...혹시 나랑 있는 거 불편해? 표정이 좀 그래서." },
+      neutral: { speaker: HEROINE_NAME, expr: "neutral", text: "오늘따라 기분이 괜찮아 보이네, 너." },
+      warm: { speaker: HEROINE_NAME, expr: "happy", text: "요즘 너랑 있으면 시간이 왜 이렇게 빨리 가는지 모르겠어." },
+    },
     choices: [
       {
         text: "좋다고 흔쾌히 따라간다",
@@ -83,6 +88,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "surprised", text: "어? 여기서 다 만나네. 혼자 산책 나온 거야?" },
       { speaker: HEROINE_NAME, expr: "playful", text: "이것도 인연인데, 그냥 갈 순 없지 않아?" },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "worried", text: "저번에 좀 서먹했잖아... 오늘은 괜찮은 거지?" },
+      neutral: { speaker: HEROINE_NAME, expr: "surprised", text: "진짜 우연이다. 근데 은근 반갑네." },
+      warm: { speaker: HEROINE_NAME, expr: "ecstatic", text: "사실 너 만나려나 하고 좀 기대하면서 나왔어. 비밀이야." },
+    },
     choices: [
       {
         text: "같이 걷자고 제안한다",
@@ -103,6 +113,12 @@ const STORY = [
         response: [{ speaker: HEROINE_NAME, expr: "ecstatic", text: "정말? 나 사진 잘 못 나오는데... 그래도 좋아!" }],
       },
     ],
+    bonusChoice: {
+      minAffection: 60,
+      text: "💗 슬쩍 손을 잡는다",
+      delta: 8,
+      response: [{ speaker: HEROINE_NAME, expr: "shy", text: "어... 손, 잡았네. ...싫진 않아." }],
+    },
     outro: [
       { speaker: "narration", text: "노을이 지기 시작할 때까지, 두 사람은 공원을 몇 바퀴나 돌았다." },
     ],
@@ -117,6 +133,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "big_smile", text: "여기 디저트가 유명하대! 같이 먹어보자." },
       { speaker: HEROINE_NAME, expr: "playful", text: "내가 미리 자리 맡아놨어. 좋은 자리지?" },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "expressionless", text: "...와줘서 다행이다. 안 올까 봐 조금 걱정했어." },
+      neutral: { speaker: HEROINE_NAME, expr: "playful", text: "오늘 메뉴 내가 다 골랐어. 기대해도 좋아." },
+      warm: { speaker: HEROINE_NAME, expr: "shy", text: "둘이 오는 거, 사실 좀 설렜어. 티 안 났으면 좋겠는데." },
+    },
     choices: [
       {
         text: "네가 좋아할 만한 걸 골라준다",
@@ -140,6 +161,12 @@ const STORY = [
         ],
       },
     ],
+    bonusChoice: {
+      minAffection: 65,
+      text: "💗 다음에 또 단둘이 오자고 약속한다",
+      delta: 7,
+      response: [{ speaker: HEROINE_NAME, expr: "love", text: "...좋아. 약속이야, 꼭이다." }],
+    },
     outro: [
       { speaker: "narration", text: "달콤한 케이크만큼이나, 오늘 하루도 달았다." },
     ],
@@ -154,6 +181,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "mad", text: "너 요즘 다른 애랑 자주 다니던데. 나한테 할 말 없어?" },
       { speaker: HEROINE_NAME, expr: "sad", text: "...아니다, 그냥 물어본 거야. 신경 쓰지 마." },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "despair", text: "요즘 우리... 뭔가 어긋난 것 같아서 계속 신경 쓰였어." },
+      neutral: { speaker: HEROINE_NAME, expr: "mad", text: "별거 아닐 수도 있는데, 그냥 한 번은 물어보고 싶었어." },
+      warm: { speaker: HEROINE_NAME, expr: "worried", text: "이런 거 물어보는 내가 좀 유치하다고 생각할까 봐 걱정했어." },
+    },
     choices: [
       {
         text: "오해라고 진심으로 설명한다",
@@ -191,6 +223,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "worried", text: "저번 일... 아직도 마음에 걸려서. 우리 괜찮은 거지?" },
       { speaker: HEROINE_NAME, expr: "worried", text: "솔직히 말해줘. 나 요즘 좀 불안했어." },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "sad", text: "솔직히... 요즘 좀 자신 없었어, 우리 사이." },
+      neutral: { speaker: HEROINE_NAME, expr: "worried", text: "그냥 확인하고 싶었어. 우리 여전히 괜찮은지." },
+      warm: { speaker: HEROINE_NAME, expr: "love", text: "이상하게 너랑 있으면 이런 고민도 별거 아닌 것처럼 느껴져." },
+    },
     choices: [
       {
         text: "손을 잡아주며 괜찮다고 말한다",
@@ -211,6 +248,12 @@ const STORY = [
         response: [{ speaker: HEROINE_NAME, expr: "ecstatic", text: "정말?! 좋아, 꼭 가자!" }],
       },
     ],
+    bonusChoice: {
+      minAffection: 70,
+      text: "💗 아무 말 없이 조용히 안아준다",
+      delta: 8,
+      response: [{ speaker: HEROINE_NAME, expr: "love", text: "...따뜻하다. 조금만 더 이렇게 있자." }],
+    },
     outro: [
       { speaker: "narration", text: "노을이 완전히 저물 때까지, 둘은 그 자리에 오래 머물렀다." },
     ],
@@ -225,6 +268,11 @@ const STORY = [
       { speaker: HEROINE_NAME, expr: "shy", text: "저기... 나 사실 너한테 하고 싶은 말이 있었어." },
       { speaker: HEROINE_NAME, expr: "shy", text: "오늘이 아니면 왠지 말 못 할 것 같아서." },
     ],
+    moodLine: {
+      cold: { speaker: HEROINE_NAME, expr: "worried", text: "사실 오늘 말 못 하고 그냥 넘어갈까도 생각했어." },
+      neutral: { speaker: HEROINE_NAME, expr: "shy", text: "이 말 하려고 며칠 동안 연습했다니까, 나." },
+      warm: { speaker: HEROINE_NAME, expr: "love", text: "너랑 있으면 이상하게 용기가 나. 그래서 오늘은 꼭 말하려고." },
+    },
     choices: [
       {
         text: "내가 먼저 고백한다",
