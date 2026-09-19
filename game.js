@@ -12,6 +12,7 @@ const BRIDGE_LINES = [
 
 let state = { dayIndex: 0, affection: START_AFFECTION, weather: "clear", history: [] };
 let currentDay = null;
+let currentWeather = "clear";
 let currentChoices = [];
 let queue = [];
 let queuePos = 0;
@@ -111,7 +112,8 @@ function loadDay(idx) {
     return;
   }
   currentDay = STORY[idx];
-  const weather = state.weather || "clear";
+  const weather = currentDay.forceWeather || state.weather || "clear";
+  currentWeather = weather;
 
   el.stage.className = "stage bg-" + currentDay.bg;
   el.stage.style.backgroundImage =
@@ -221,7 +223,7 @@ function pickChoice(i) {
     day: currentDay.id,
     title: currentDay.title,
     bg: currentDay.bg,
-    weather: state.weather || "clear",
+    weather: currentWeather,
     choiceText: choice.text,
     delta: choice.delta,
   });
