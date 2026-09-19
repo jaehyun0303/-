@@ -98,11 +98,12 @@ html, body {
 .hud {
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 52px;
+  min-height: 52px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px;
   background: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent);
   z-index: 5;
   font-size: 0.85rem;
