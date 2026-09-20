@@ -58,6 +58,35 @@
   </div>
 
   <div id="choices-box" class="choices-box" hidden></div>
+
+  <button id="chat-fab" class="chat-fab" title="유나와 대화하기">💬</button>
+</div>
+
+<div id="chat-screen" class="screen">
+  <div class="chat-panel">
+    <div class="chat-header">
+      <span>유나와 대화하기</span>
+      <button id="chat-close-btn" class="chat-close" aria-label="닫기">✕</button>
+    </div>
+
+    <div id="chat-key-setup" class="chat-key-setup" hidden>
+      <p class="chat-key-desc">
+        AI 대화는 여러분의 Anthropic API 키로 브라우저에서 직접 Claude를 호출합니다.
+        키는 <strong>이 브라우저에만</strong> 저장되고, 깃허브 저장소나 다른 곳으로는 전혀 전송되지 않습니다.
+      </p>
+      <input id="chat-key-input" class="chat-key-input" type="password" placeholder="sk-ant-... API 키 입력" autocomplete="off">
+      <button id="chat-key-save" class="main-btn">저장하고 시작</button>
+      <p class="chat-key-hint">키가 없다면 console.anthropic.com 에서 발급받을 수 있어요.</p>
+    </div>
+
+    <div id="chat-messages" class="chat-messages"></div>
+
+    <div id="chat-input-row" class="chat-input-row" hidden>
+      <input id="chat-input" class="chat-input" type="text" placeholder="메시지를 입력해봐..." autocomplete="off">
+      <button id="chat-send-btn" class="chat-send-btn" aria-label="보내기">➤</button>
+    </div>
+    <button id="chat-forget-key" class="chat-forget-key" hidden>저장된 API 키 삭제</button>
+  </div>
 </div>
 
 <div id="ending-screen" class="screen">

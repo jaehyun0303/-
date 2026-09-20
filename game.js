@@ -22,6 +22,11 @@ let touchedParts = new Set();
 let patCount = 0;
 let toastTimer = null;
 
+const CHAT_KEY_STORAGE = "yuna_ai_key";
+const CHAT_MODEL = "claude-sonnet-5";
+let chatHistory = [];
+let chatBusy = false;
+
 function getAffectionTier(score) {
   if (score < 40) return "cold";
   if (score >= 70) return "warm";
@@ -59,6 +64,16 @@ const el = {
   touchToast: document.getElementById("touch-toast"),
   touchContinueBtn: document.getElementById("touch-continue-btn"),
   cheekOverlay: document.getElementById("cheek-pull-overlay"),
+  chatFab: document.getElementById("chat-fab"),
+  chatCloseBtn: document.getElementById("chat-close-btn"),
+  chatKeySetup: document.getElementById("chat-key-setup"),
+  chatKeyInput: document.getElementById("chat-key-input"),
+  chatKeySave: document.getElementById("chat-key-save"),
+  chatMessages: document.getElementById("chat-messages"),
+  chatInputRow: document.getElementById("chat-input-row"),
+  chatInput: document.getElementById("chat-input"),
+  chatSendBtn: document.getElementById("chat-send-btn"),
+  chatForgetKey: document.getElementById("chat-forget-key"),
 };
 
 function clamp(v, min, max) {
@@ -109,6 +124,8 @@ function startNewGame() {
     history: [],
   };
   saveState();
+  chatHistory = [];
+  el.chatMessages.innerHTML = "";
   el.sprite.src = "assets/expressions/neutral.png";
   showScreen("game-screen");
   loadDay(state.dayIndex);
@@ -378,6 +395,157 @@ function checkContinueVisibility() {
 }
 
 // ---------------------------------------------
+// AI 대화 (사용자 본인의 Anthropic API 키로 브라우저에서 직접 호출)
+// ---------------------------------------------
+function getSavedChatKey() {
+  try {
+    return localStorage.getItem(CHAT_KEY_STORAGE) || "";
+  } catch (e) {
+    return "";
+  }
+}
+
+function saveChatKey(key) {
+  try {
+    localStorage.setItem(CHAT_KEY_STORAGE, key);
+  } catch (e) {
+    /* localStorage unavailable — key just won't persist across reloads */
+  }
+}
+
+function forgetChatKey() {
+  try {
+    localStorage.removeItem(CHAT_KEY_STORAGE);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+function appendChatMessage(text, cssClass) {
+  const el2 = document.createElement("div");
+  el2.className = "chat-msg " + cssClass;
+  el2.textContent = text;
+  el.chatMessages.appendChild(el2);
+  el.chatMessages.scrollTop = el.chatMessages.scrollHeight;
+  return el2;
+}
+
+function buildChatSystemPrompt() {
+  const tier = getAffectionTier(state.affection);
+  const tierDesc =
+    tier === "warm" ? "따뜻하고 애정이 넘치는" : tier === "cold" ? "다소 차갑고 조심스러운" : "무난하고 편안한";
+  const dayInfo = currentDay
+    ? "지금은 " + currentDay.id + "일째, '" + currentDay.title + "' 장면이야."
+    : "";
+  return [
+    "너는 '유나'라는 이름의 미소녀 고등학생이야. 이건 데이트 시뮬레이션 게임이고, 지금 플레이어와 대화하는 중이야.",
+    "성격: 새침하지만 다정하고, 장난기가 많고, 진지할 땐 솔직하게 마음을 표현해. 말투는 반말이야.",
+    dayInfo,
+    "현재 호감도는 100점 만점에 " + state.affection + "점이고, 지금 두 사람 사이는 " + tierDesc + " 분위기야. 이 호감도에 맞게 태도를 조절해서 대답해.",
+    "답변은 2~3문장 이내로 짧고 자연스럽게 해. 이모지는 거의 쓰지 마. 네가 게임 캐릭터나 AI라는 사실은 언급하지 마.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function openChat() {
+  const key = getSavedChatKey();
+  el.chatKeySetup.hidden = !!key;
+  el.chatInputRow.hidden = !key;
+  el.chatForgetKey.hidden = !key;
+  if (key && el.chatMessages.children.length === 0) {
+    appendChatMessage("유나와의 대화가 시작됩니다.", "system-note");
+  }
+  showScreen("chat-screen");
+  if (key) el.chatInput.focus();
+}
+
+function closeChat() {
+  showScreen("game-screen");
+}
+
+function handleSaveChatKey() {
+  const key = el.chatKeyInput.value.trim();
+  if (!key) return;
+  saveChatKey(key);
+  el.chatKeyInput.value = "";
+  el.chatKeySetup.hidden = true;
+  el.chatInputRow.hidden = false;
+  el.chatForgetKey.hidden = false;
+  appendChatMessage("유나와의 대화가 시작됩니다.", "system-note");
+  el.chatInput.focus();
+}
+
+function handleForgetChatKey() {
+  if (!confirm("저장된 API 키를 삭제할까요?")) return;
+  forgetChatKey();
+  chatHistory = [];
+  el.chatMessages.innerHTML = "";
+  el.chatKeySetup.hidden = false;
+  el.chatInputRow.hidden = true;
+  el.chatForgetKey.hidden = true;
+}
+
+async function sendChatMessage() {
+  if (chatBusy) return;
+  const text = el.chatInput.value.trim();
+  if (!text) return;
+  const key = getSavedChatKey();
+  if (!key) return;
+
+  el.chatInput.value = "";
+  appendChatMessage(text, "user");
+  chatHistory.push({ role: "user", content: text });
+
+  chatBusy = true;
+  el.chatSendBtn.disabled = true;
+  const loadingEl = appendChatMessage("...", "loading");
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: CHAT_MODEL,
+        max_tokens: 300,
+        system: buildChatSystemPrompt(),
+        messages: chatHistory,
+      }),
+    });
+    const data = await res.json();
+    loadingEl.remove();
+
+    if (!res.ok) {
+      const msg = (data && data.error && data.error.message) || "요청에 실패했어요.";
+      appendChatMessage("⚠ " + msg + " (API 키를 확인해주세요)", "error");
+      chatHistory.pop();
+      return;
+    }
+
+    const reply = data.content && data.content[0] && data.content[0].text;
+    if (reply) {
+      appendChatMessage(reply, "assistant");
+      chatHistory.push({ role: "assistant", content: reply });
+    } else {
+      appendChatMessage("⚠ 응답을 받지 못했어요.", "error");
+      chatHistory.pop();
+    }
+  } catch (e) {
+    loadingEl.remove();
+    appendChatMessage("⚠ 연결에 실패했어요. 네트워크 상태를 확인해주세요.", "error");
+    chatHistory.pop();
+  } finally {
+    chatBusy = false;
+    el.chatSendBtn.disabled = false;
+  }
+}
+
+// ---------------------------------------------
 // 이벤트 바인딩
 // ---------------------------------------------
 el.dialogueBox.addEventListener("click", showNextLine);
@@ -405,6 +573,17 @@ el.touchContinueBtn.addEventListener("click", () => {
   el.touchScene.hidden = true;
   el.sprite.style.visibility = "visible";
   showChoices();
+});
+el.chatFab.addEventListener("click", openChat);
+el.chatCloseBtn.addEventListener("click", closeChat);
+el.chatKeySave.addEventListener("click", handleSaveChatKey);
+el.chatForgetKey.addEventListener("click", handleForgetChatKey);
+el.chatSendBtn.addEventListener("click", sendChatMessage);
+el.chatInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendChatMessage();
+});
+el.chatKeyInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") handleSaveChatKey();
 });
 
 checkContinueVisibility();
